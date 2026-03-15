@@ -55,7 +55,7 @@ app.get("/api/meta-lead", (req, res) => {
   const token     = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
 
-  if (mode === "subscribe" && token === process.env.META_VERIFY_TOKEN) {
+  if (mode === "subscribe" && token === "finpratica2026") {
     console.log("Meta webhook verified");
     res.status(200).send(challenge);
   } else {
