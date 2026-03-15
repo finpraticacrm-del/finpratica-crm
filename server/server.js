@@ -51,15 +51,13 @@ app.post("/api/lead", async (req, res) => {
 
 // ── GET /api/meta-lead — verifica token Meta ─────────────────
 app.get("/api/meta-lead", (req, res) => {
-  const mode      = req.query["hub.mode"];
-  const token     = req.query["hub.verify_token"];
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
-
   if (mode === "subscribe" && token === "finpratica2026") {
-    console.log("Meta webhook verified");
     res.status(200).send(challenge);
   } else {
-    res.sendStatus(403);
+    res.status(403).send("Forbidden");
   }
 });
 
