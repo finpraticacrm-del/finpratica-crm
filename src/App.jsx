@@ -9,11 +9,11 @@ import { confrontaPrestitoPersonale, DURATE_PRESTITO } from './prestitopersonale
 //  ✨ NUOVO: Motore di Richiamo IA — pratiche in scadenza
 // ============================================================
 
-const GROQ_API_KEY = "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";
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_KEY;
 const GROQ_MODEL   = "llama-3.3-70b-versatile";
 
-const SUPABASE_URL = "https://taxhjdmnchjbdinzqstd.supabase.co";
-const SUPABASE_KEY = "sb_publishable_zy8OMf0OPQabS8Kp_6jPkA_ewyxtYZo";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const C = {
@@ -560,7 +560,7 @@ export default function App() {
     notifEmail: "",
     notifWhatsapp: "",
     // CRM
-    groqApiKey: "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",
+    groqApiKey: import.meta.env.VITE_GROQ_KEY || "",
     webhookServer: "",
     metaVerifyToken: "finpratica2026",
     firmaEmail: "",
