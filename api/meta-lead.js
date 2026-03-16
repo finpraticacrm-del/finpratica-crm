@@ -1,10 +1,9 @@
-const { createClient } = require("@supabase/supabase-js");
-
 exports.handler = async function(event) {const mode = event.queryStringParameters?.["hub.mode"];
   const token = event.queryStringParameters?.["hub.verify_token"];
   const challenge = event.queryStringParameters?.["hub.challenge"];if (event.httpMethod === "GET" && mode === "subscribe" && token === "finpratica2026") {
     return { statusCode: 200, body: challenge };
   }if (event.httpMethod === "POST") {
+    const { createClient } = require("@supabase/supabase-js");
     const sb = createClient(
       "https://taxhjdmnchjbdinzqstd.supabase.co","sb_publishable_zy8OMf0OPQabS8Kp_6jPkA_ewyxtYZo"
     );
