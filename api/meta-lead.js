@@ -1,11 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 
-const sb = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
-
 export const handler = async (event) => {
+  const sb = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_KEY
+  );
   // ── GET — verifica token Meta ─────────────────────────────
   if (event.httpMethod === "GET") {
     const p         = event.queryStringParameters || {};
