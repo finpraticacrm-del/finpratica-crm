@@ -1,60 +1,22 @@
-import { createClient } from "@supabase/supabase-js";
-
-export const handler = async (event) => {
-  const sb = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_KEY
-  );
-  // ── GET — verifica token Meta ─────────────────────────────
+exports.handler = async function(event, context) {
   if (event.httpMethod === "GET") {
-    const p         = event.queryStringParameters || {};
-    const mode      = p["hub.mode"];
-    const token     = p["hub.verify_token"];
-    const challenge = p["hub.challenge"];
-
-    if (mode === "subscribe" && token === "finpratica2026") {
-      return { statusCode: 200, body: challenge };
+    const mode = event.queryStringParameters["hub.mode"];const token = event.queryStringParameters["hub.verify_token"];
+    const challenge = event.queryStringParameters["hub.challenge"];
+    if (mode === "subscribe" && token === "finpratica2026") {  return { statusCode: 200, body: challenge };
     }
-    return { statusCode: 403, body: "Forbidden" };
-  }
-
-  // ── POST — riceve lead da Facebook Lead Form Ads ──────────
+    return { statusCode: 403, body: "Forbidden" }; }
   if (event.httpMethod === "POST") {
-    try {
-      const body    = JSON.parse(event.body || "{}");
-      const entries = body.entry || [];
-
-      for (const entry of entries) {
-        for (const change of entry.changes || []) {
-          const value  = change.value || {};
-          const fields = value.field_data || [];
-
-          const get = (name) =>
-            fields.find((f) => f.name === name)?.values?.[0] || "";
-
-          const lead = {
-            nome:     get("first_name") || get("full_name").split(" ")[0] || "",
-            cognome:  get("last_name")  || get("full_name").split(" ").slice(1).join(" ") || "",
-            telefono: get("phone_number") || get("phone") || "",
-            email:    get("email") || "",
-            note:     `Lead da Facebook Lead Ads · Form ID: ${value.form_id || ""} · Ad ID: ${value.ad_id || ""}`,
-            canale:   "facebook",
-            fonte:    "meta_lead_ads",
-            stato:    "nuovo",
-            data:     new Date().toISOString().split("T")[0],
-          };
-
-          const { error } = await sb.from("fp_clienti").insert([lead]);
-          if (error) console.error("Supabase insert error:", error.message);
-        }
+    try {const body = JSON.parse(event.body);
+      const SUPABASE_URL = "https://taxhjdmnchjbdinzqstd.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_zy8OMf0OPQabS8Kp_6jPkA_ewyxtYZo";const { createClient } = require("@supabase/supabase-js");
+      const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+      const leads = body.entry?.[0]?.changes?.[0]?.value?.leads || [];for (const lead of leads) {
+        const fields = {};
+        lead.field_data?.forEach(f => { fields[f.name] = f.values?.[0]; });await sb.from("fp_clienti").insert({
+          id: lead.id || Date.now().toString(),
+          data: { nome: fields.full_name || fields.nome, telefono: fields.phone_number || fields.telefono, email: fields.email, fonte: "facebook_lead_ads", stato: "lead", data_creazione: new Date().toISOString() } });
       }
-
-      return { statusCode: 200, body: "OK" };
-    } catch (err) {
-      console.error("POST /api/meta-lead error:", err.message);
-      return { statusCode: 500, body: err.message };
-    }
-  }
-
-  return { statusCode: 405, body: "Method Not Allowed" };
+      return { statusCode: 200, body: "OK" };} catch(e) {
+      return { statusCode: 500, body: e.message }; }
+  }return { statusCode: 405, body: "Method not allowed" };
 };
